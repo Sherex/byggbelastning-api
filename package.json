@@ -1,0 +1,36 @@
+{
+  "name": "school-client-traffic-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An API to get data from school-client-traffic-sync DB",
+  "main": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node-dev --no-notify",
+    "lint": "eslint src/",
+    "lint:fix": "eslint --fix src/",
+    "test": "npm run lint"
+  },
+  "keywords": [],
+  "author": "Sherex <ingar@i-h.no> (https://github.com/Sherex)",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server-express": "^2.16.1",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/node": "14.6.0",
+    "@typescript-eslint/eslint-plugin": "3.9.1",
+    "eslint": "7.7.0",
+    "eslint-config-standard-with-typescript": "18.0.2",
+    "eslint-plugin-import": "2.22.0",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-standard": "4.0.1",
+    "ts-node-dev": "1.0.0-pre.58",
+    "typescript": "3.9.7"
+  }
+}
