@@ -1,5 +1,6 @@
 import express from 'express'
 import { ApolloServer, gql } from 'apollo-server-express'
+import { getLocations } from './lib/db'
 
 const typeDefs = gql`
   type Query {
@@ -28,7 +29,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    locations: () => getLocations()
+    locations: async () => await getLocations()
   }
 }
 

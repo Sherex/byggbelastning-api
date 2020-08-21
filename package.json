@@ -18,11 +18,15 @@
   "author": "Sherex <ingar@i-h.no> (https://github.com/Sherex)",
   "license": "MIT",
   "dependencies": {
+    "@vtfk/logger": "^2.3.0",
     "apollo-server-express": "^2.16.1",
-    "express": "^4.17.1"
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "pg": "^8.3.2"
   },
   "devDependencies": {
     "@types/node": "14.6.0",
+    "@types/pg": "^7.14.4",
     "@typescript-eslint/eslint-plugin": "3.9.1",
     "eslint": "7.7.0",
     "eslint-config-standard-with-typescript": "18.0.2",
