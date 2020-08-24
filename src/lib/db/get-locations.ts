@@ -1,0 +1,72 @@
+/* eslint-disable-next-line @typescript-eslint/triple-slash-reference */
+/// <reference path="../vtfk-logger.d.ts"/>
+import { logger } from '@vtfk/logger'
+import { pool } from './db'
+import { QueryResult } from 'pg'
+
+export interface Locations {
+  campus: string
+  building: string
+  floor: string
+  imageBase64: string
+  imageLength: number
+  imageWidth: number
+  imageOffsetX: number
+  imageOffsetY: number
+}
+
+export async function getLocations (): Promise<Campus[]> {
+  logger('debug', ['get-locations', 'getLocations', 'getting locations'])
+  const query = `
+  SELECT
+    campus,
+    building,
+    floor
+  FROM locations`
+  const response: QueryResult<Locations> = await pool.query(query)
+  logger('debug', ['get-locations', 'getLocations', 'getting locations', 'success'])
+
+  const locations: Campus[] = []
+  response.rows.forEach(row => {
+    let campus = locations.find(campus => row.campus === campus.name)
+    if (campus === undefined) {
+      locations.push({
+        name: row.campus,
+        buildings: []
+      })
+      campus = locations[locations.length - 1]
+    }
+
+    let building = campus.buildings.find(building => row.building === building.name)
+    if (building === undefined) {
+      campus.buildings.push({
+        name: row.building,
+        floors: []
+      })
+      building = campus.buildings[campus.buildings.length - 1]
+    }
+
+    let floor = building.floors.find(floor => row.floor === floor.name)
+    if (floor === undefined) {
+      building.floors.push({
+        name: row.floor
+      })
+      floor = building.floors[building.floors.length - 1]
+    }
+  })
+  return locations
+}
+
+export interface Campus {
+  name: string
+  buildings: Building[]
+}
+
+export interface Building {
+  name: string
+  floors: Floor[]
+}
+
+export interface Floor {
+  name: string
+}
