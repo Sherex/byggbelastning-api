@@ -23,7 +23,7 @@ const typeDefs = gql`
 
   type Clients {
     current: Int
-    timespan: [Number]
+    timespan: [Int]
   }
 `
 
