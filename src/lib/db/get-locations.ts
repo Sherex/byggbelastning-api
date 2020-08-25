@@ -1,5 +1,3 @@
-/* eslint-disable-next-line @typescript-eslint/triple-slash-reference */
-/// <reference path="../vtfk-logger.d.ts"/>
 import { logger } from '@vtfk/logger'
 import { pool } from './db'
 import { QueryResult } from 'pg'
