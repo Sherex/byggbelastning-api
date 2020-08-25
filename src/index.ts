@@ -1,39 +1,8 @@
 import express from 'express'
-import { ApolloServer, gql } from 'apollo-server-express'
-import { getLocations } from './lib/db'
+import { ApolloServer } from 'apollo-server-express'
+import { schema } from './graphql-schemas'
 
-const typeDefs = gql`
-  type Query {
-    locations: [Location]
-  }
-
-  type Location {
-    name: String
-    buildings: [Building]
-  }
-
-  type Building {
-    name: String
-    floors: [Floor]
-  }
-
-  type Floor {
-    name: String
-  }
-
-  type Clients {
-    current: Int
-    timespan: [Int]
-  }
-`
-
-const resolvers = {
-  Query: {
-    locations: async () => await getLocations()
-  }
-}
-
-const server = new ApolloServer({ typeDefs, resolvers })
+const server = new ApolloServer({ schema })
 
 const app = express()
 server.applyMiddleware({ app })
