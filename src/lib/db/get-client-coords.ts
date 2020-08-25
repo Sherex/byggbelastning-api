@@ -13,7 +13,7 @@ export interface ClientCoordinate {
 export async function getClientCoords (): Promise<ClientCoordinate[]> {
   logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates'])
   const query = 'SELECT campus, building, floor, cid, x, y FROM clients_coordinates'
-  const response = await pool.query(query)
+  const response = await pool.query<ClientCoordinate>(query)
   logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates', 'success'])
   return response.rows
 }

@@ -1,6 +1,5 @@
 import { logger } from '@vtfk/logger'
 import { pool } from './db'
-import { QueryResult } from 'pg'
 
 export interface Locations {
   campus: string
@@ -21,7 +20,7 @@ export async function getLocations (): Promise<Campus[]> {
     building,
     floor
   FROM locations`
-  const response: QueryResult<Locations> = await pool.query(query)
+  const response = await pool.query<Locations>(query)
   logger('debug', ['get-locations', 'getLocations', 'getting locations', 'success'])
 
   const locations: Campus[] = []
