@@ -35,7 +35,12 @@ export const query = gql`
 
 export const resolvers: IResolvers<any, any> = {
   Query: {
-    locations: async (parent, args, ctx) => (await getLocations()).filter(loc => args.name.includes(loc.name))
+    locations: async (parent, args, ctx) => {
+      const locations = await getLocations()
+      if (Array.isArray(args.name)) return locations.filter(loc => args.name.includes(loc.name))
+      if (typeof args.name === 'undefined') return locations
+      throw Error('Unexpected type on argument "name" of locations, expected [String]')
+    }
   },
   Location: {
     name: (parent, args, ctx) => parent.name,
