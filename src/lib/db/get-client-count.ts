@@ -2,8 +2,13 @@ import { logger } from '@vtfk/logger'
 import format from 'pg-format'
 import { pool } from './db'
 
-export interface ClientCount {
+export interface ClientCountResponse {
   time: Date
+  count: number
+}
+
+export interface ClientCountReturn {
+  time: String
   count: number
 }
 
@@ -17,15 +22,14 @@ export interface GetClientCountOptions {
   }
 }
 
-export async function getClientCount (options: GetClientCountOptions): Promise<ClientCount[]> {
-  console.log('###' + options.location)
+export async function getClientCount (options: GetClientCountOptions): Promise<ClientCountReturn[]> {
   const queryVariables = []
   if (typeof options.timespan?.from !== 'undefined') queryVariables.push(options.timespan?.from)
   if (typeof options.timespan?.to !== 'undefined') queryVariables.push(options.timespan?.to)
   if (typeof options.building !== 'undefined') queryVariables.push(options.building)
   if (typeof options.floor !== 'undefined') queryVariables.push(options.floor)
 
-  logger('debug', ['get-client-count', 'getClientCount', 'getting client count'])
+  logger('debug', ['get-client-count', 'getClientCount', 'getting client count', 'options', JSON.stringify(options)])
   const query = format(`
   SELECT
     time,
@@ -42,7 +46,10 @@ export async function getClientCount (options: GetClientCountOptions): Promise<C
   options.location
   )
 
-  const response = await pool.query<ClientCount>(query)
+  const response = await pool.query<ClientCountResponse>(query)
   logger('debug', ['get-client-count', 'getClientCount', 'getting client count', 'success'])
-  return response.rows
+  return response.rows.map(row => ({
+    ...row,
+    time: row.time.toISOString()
+  }))
 }
