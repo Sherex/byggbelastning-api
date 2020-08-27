@@ -21,7 +21,7 @@ export interface GetClientCountOptions {
     to?: Date
   }
 }
-
+// TODO: Use dataloader for caching
 export async function getClientCount (options: GetClientCountOptions): Promise<ClientCountReturn[]> {
   const queryVariables = []
   if (typeof options.timespan?.from !== 'undefined') queryVariables.push(options.timespan?.from)
@@ -33,7 +33,7 @@ export async function getClientCount (options: GetClientCountOptions): Promise<C
   const query = format(`
   SELECT
     time,
-    assocount as count
+    SUM(assocount) as count
   FROM clients_location
   WHERE
     ${typeof options.timespan?.from !== 'undefined' ? 'time > %L AND' : ''}
@@ -41,6 +41,7 @@ export async function getClientCount (options: GetClientCountOptions): Promise<C
     ${typeof options.building !== 'undefined' ? 'building = %L AND' : ''}
     ${typeof options.floor !== 'undefined' ? 'floor = %L AND' : ''}
     location = %L
+  GROUP BY time
   ORDER BY time`,
   ...queryVariables,
   options.location

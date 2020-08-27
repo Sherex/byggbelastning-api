@@ -11,15 +11,15 @@ export interface Locations {
   imageOffsetX: number
   imageOffsetY: number
 }
-
+// TODO: Change campus to location
 export async function getLocations (): Promise<Campus[]> {
   logger('debug', ['get-locations', 'getLocations', 'getting locations'])
   const query = `
   SELECT
-    campus,
+    location as campus,
     building,
     floor
-  FROM locations`
+  FROM clients_location`
   const response = await pool.query<Locations>(query)
   logger('debug', ['get-locations', 'getLocations', 'getting locations', 'success'])
 
