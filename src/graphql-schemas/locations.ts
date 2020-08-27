@@ -15,10 +15,12 @@ export const query = gql`
   type Building {
     name: String
     floors(name: [String]): [Floor]
+    clientCount: Clients
   }
 
   type Floor {
     name: String
+    clientCount: Clients
   }
 
   type Clients {
@@ -37,15 +39,24 @@ export const resolvers: IResolvers<any, any> = {
   },
   Location: {
     name: (parent, args, ctx) => parent.name,
-    buildings: (parent, args, ctx) => parent.buildings.map((b: any) => ({ ...b, location: parent.name })),
+    buildings: (parent, args, ctx) => parent.buildings,
     clientCount: (parent, args, ctx) => ({ location: parent.name })
   },
   Building: {
     name: (parent, args, ctx) => parent.name,
-    floors: (parent, args, ctx) => parent.floors
+    floors: (parent, args, ctx) => parent.floors,
+    clientCount: async (parent, args, ctx) => ({
+      location: parent.location,
+      building: parent.name
+    })
   },
   Floor: {
-    name: (parent, args, ctx) => parent.name
+    name: (parent, args, ctx) => parent.name,
+    clientCount: async (parent, args, ctx) => ({
+      location: parent.location,
+      building: parent.building,
+      floor: parent.name
+    })
   },
   Clients: {
     timespan: async (parent, args, ctx) => {

@@ -38,6 +38,7 @@ export async function getLocations (): Promise<Campus[]> {
     if (building === undefined) {
       campus.buildings.push({
         name: row.building,
+        location: row.campus,
         floors: []
       })
       building = campus.buildings[campus.buildings.length - 1]
@@ -46,7 +47,9 @@ export async function getLocations (): Promise<Campus[]> {
     let floor = building.floors.find(floor => row.floor === floor.name)
     if (floor === undefined) {
       building.floors.push({
-        name: row.floor
+        name: row.floor,
+        location: row.campus,
+        building: row.building
       })
       floor = building.floors[building.floors.length - 1]
     }
@@ -61,9 +64,12 @@ export interface Campus {
 
 export interface Building {
   name: string
+  location: string
   floors: Floor[]
 }
 
 export interface Floor {
   name: string
+  location: string
+  building: string
 }
