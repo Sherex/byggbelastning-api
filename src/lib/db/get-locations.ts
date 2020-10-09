@@ -2,53 +2,51 @@ import { logger } from '@vtfk/logger'
 import { pool } from './db'
 
 export interface Locations {
-  campus: string
+  location: string
   building: string
   floor: string
-  imageBase64: string
-  imageLength: number
-  imageWidth: number
-  imageOffsetX: number
-  imageOffsetY: number
 }
-// TODO: Change campus to location
-export async function getLocations (): Promise<Campus[]> {
+export async function getLocations (): Promise<Location[]> {
   logger('debug', ['get-locations', 'getLocations', 'getting locations'])
   const query = `
   SELECT
-    location as campus,
-    building,
-    floor
-  FROM clients_location`
+    l.name AS "location",
+    b.name AS "building",
+    f.name AS "floor"
+  FROM "location" l
+  LEFT JOIN building b
+    ON l.id = b.location_id
+  LEFT JOIN floor f
+    ON b.id = f.building_id`
   const response = await pool.query<Locations>(query)
   logger('debug', ['get-locations', 'getLocations', 'getting locations', 'success'])
 
-  const locations: Campus[] = []
+  const locations: Location[] = []
   response.rows.forEach(row => {
-    let campus = locations.find(campus => row.campus === campus.name)
-    if (campus === undefined) {
+    let location = locations.find(location => row.location === location.name)
+    if (location === undefined) {
       locations.push({
-        name: row.campus,
+        name: row.location,
         buildings: []
       })
-      campus = locations[locations.length - 1]
+      location = locations[locations.length - 1]
     }
 
-    let building = campus.buildings.find(building => row.building === building.name)
+    let building = location.buildings.find(building => row.building === building.name)
     if (building === undefined) {
-      campus.buildings.push({
+      location.buildings.push({
         name: row.building,
-        location: row.campus,
+        location: row.location,
         floors: []
       })
-      building = campus.buildings[campus.buildings.length - 1]
+      building = location.buildings[location.buildings.length - 1]
     }
 
     let floor = building.floors.find(floor => row.floor === floor.name)
     if (floor === undefined) {
       building.floors.push({
         name: row.floor,
-        location: row.campus,
+        location: row.location,
         building: row.building
       })
       floor = building.floors[building.floors.length - 1]
@@ -57,7 +55,7 @@ export async function getLocations (): Promise<Campus[]> {
   return locations
 }
 
-export interface Campus {
+export interface Location {
   name: string
   buildings: Building[]
 }
