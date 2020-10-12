@@ -9,6 +9,7 @@ export const query = gql`
   type Location {
     id: Int
     name: String
+    type: LocationType
     buildings(name: [String]): [Building]
     clientCount: Clients
   }
@@ -34,6 +35,12 @@ export const query = gql`
     time: String
     count: Int
   }
+
+  type LocationType {
+    id: Int
+    code: String
+    name: String
+  }
 `
 
 export const resolvers: IResolvers<any, any> = {
@@ -48,6 +55,7 @@ export const resolvers: IResolvers<any, any> = {
   Location: {
     id: (parent, args, ctx) => parent.id,
     name: (parent, args, ctx) => parent.name,
+    type: (parent, args, ctx) => parent.type,
     buildings: (parent, args, ctx) => parent.buildings,
     clientCount: (parent, args, ctx) => ({ location: parent.name })
   },

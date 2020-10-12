@@ -8,6 +8,9 @@ export interface Locations {
   location: string
   building: string
   floor: string
+  type_id: number
+  type_code: string
+  type_name: string
 }
 export async function getLocations (): Promise<Location[]> {
   logger('debug', ['get-locations', 'getLocations', 'getting locations'])
@@ -19,8 +22,13 @@ export async function getLocations (): Promise<Location[]> {
     f.id AS "floor_id",
     l.name AS "location",
     b.name AS "building",
-    f.name AS "floor"
+    f.name AS "floor",
+    lt.id AS "type_id",
+    lt.code AS "type_code",
+    lt.name AS "type_name"
   FROM "location" l
+  LEFT JOIN location_type lt
+    ON l.type_id = lt.id
   LEFT JOIN building b
     ON l.id = b.location_id
   LEFT JOIN floor f
@@ -35,6 +43,11 @@ export async function getLocations (): Promise<Location[]> {
       locations.push({
         id: row.location_id,
         name: row.location,
+        type: {
+          id: row.type_id,
+          code: row.type_code,
+          name: row.type_name
+        },
         buildings: []
       })
       location = locations[locations.length - 1]
@@ -68,6 +81,11 @@ export async function getLocations (): Promise<Location[]> {
 export interface Location {
   id: number
   name: string
+  type: {
+    id: number
+    code: string
+    name: string
+  }
   buildings: Building[]
 }
 
