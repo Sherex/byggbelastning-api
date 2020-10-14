@@ -1,7 +1,7 @@
 import { logger } from '@vtfk/logger'
 import { pool } from './db'
 
-export interface Locations {
+interface LocationsResponse {
   location_id: number
   building_id: number
   floor_id: number
@@ -33,7 +33,7 @@ export async function getLocations (): Promise<Location[]> {
     ON l.id = b.location_id
   LEFT JOIN floor f
     ON b.id = f.building_id`
-  const response = await pool.query<Locations>(query)
+  const response = await pool.query<LocationsResponse>(query)
   logger('debug', ['get-locations', 'getLocations', 'getting locations', 'success', 'query time', `${Date.now() - queryTime}ms`])
 
   const locations: Location[] = []
