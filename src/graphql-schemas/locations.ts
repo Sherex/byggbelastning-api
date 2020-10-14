@@ -1,5 +1,5 @@
 import { gql, IResolvers } from 'apollo-server-express'
-import { getLocations, getClientCount } from '../lib/db'
+import { Context } from '../lib/get-context'
 
 export const query = gql`
   type Query {
@@ -43,10 +43,10 @@ export const query = gql`
   }
 `
 
-export const resolvers: IResolvers<any, any> = {
+export const resolvers: IResolvers<any, Context> = {
   Query: {
     locations: async (parent, args, ctx) => {
-      const locations = await getLocations()
+      const locations = await ctx.getLocations()
       if (Array.isArray(args.name)) return locations.filter(loc => args.name.includes(loc.name))
       if (typeof args.name === 'undefined') return locations
       throw Error('Unexpected type on argument "name" of locations, expected [String]')
@@ -79,7 +79,7 @@ export const resolvers: IResolvers<any, any> = {
   },
   Clients: {
     timespan: async (parent, args, ctx) => {
-      return await getClientCount({
+      return await ctx.getClientCount({
         location: parent.location,
         building: parent.building,
         floor: parent.floor,

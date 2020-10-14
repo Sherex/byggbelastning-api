@@ -2,7 +2,7 @@ import { logger } from '@vtfk/logger'
 import format from 'pg-format'
 import { pool } from './db'
 
-export interface ClientCountResponse {
+interface ClientCountResponse {
   time: Date
   count: number
 }
