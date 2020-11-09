@@ -17,22 +17,16 @@ export async function getLocations (): Promise<Location[]> {
   const queryTime = Date.now()
   const query = `
   SELECT
-    l.id AS "location_id",
-    b.id AS "building_id",
-    f.id AS "floor_id",
-    l.name AS "location",
-    b.name AS "building",
-    f.name AS "floor",
-    lt.id AS "type_id",
-    lt.code AS "type_code",
-    lt.name AS "type_name"
-  FROM "location" l
-  LEFT JOIN location_type lt
-    ON l.type_id = lt.id
-  LEFT JOIN building b
-    ON l.id = b.location_id
-  LEFT JOIN floor f
-    ON b.id = f.building_id`
+    lv.location_id        AS "location_id",
+    lv.location_name      AS "location",
+    lv.building_id        AS "building_id",
+    lv.building_name      AS "building",
+    lv.floor_id           AS "floor_id",
+    lv.floor_name         AS "floor",
+    lv.location_type_id   AS "type_id",
+    lv.location_type      AS "type_code",
+    lv.location_type_name AS "type_name"
+  FROM location_view lv`
   const response = await pool.query<LocationsResponse>(query)
   logger('debug', ['get-locations', 'getLocations', 'getting locations', 'success', 'query time', `${Date.now() - queryTime}ms`])
 
