@@ -2,22 +2,18 @@ import {
   getLocations,
   Location,
   getClientCount,
-  ClientCountReturn,
-  GetClientCountOptions,
-  getClientCoords,
-  ClientCoordinate
+  ClientCount,
+  GetClientCountOptions
 } from './db'
 
 export interface Context {
   getLocations: () => Promise<Location[]>
-  getClientCount: (options: GetClientCountOptions) => Promise<ClientCountReturn[]>
-  getClientCoords: () => Promise<ClientCoordinate[]>
+  getClientCount: (options: GetClientCountOptions) => Promise<ClientCount[]>
 }
 
 export function getContext (): Context {
   return {
     getLocations,
-    getClientCount,
-    getClientCoords
+    getClientCount
   }
 }

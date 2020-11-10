@@ -3,7 +3,7 @@ import { Context } from '../lib/get-context'
 
 export const query = gql`
   type Query {
-    locations(name: [String]): [Location]
+    locations(id: [Int]): [Location]
   }
 
   type Location {
@@ -47,8 +47,8 @@ export const resolvers: IResolvers<any, Context> = {
   Query: {
     locations: async (parent, args, ctx) => {
       const locations = await ctx.getLocations()
-      if (Array.isArray(args.name)) return locations.filter(loc => args.name.includes(loc.name))
-      if (typeof args.name === 'undefined') return locations
+      if (Array.isArray(args.id)) return locations.filter(loc => args.id.includes(loc.id))
+      if (typeof args.id === 'undefined') return locations
       throw Error('Unexpected type on argument "name" of locations, expected [String]')
     }
   },
@@ -57,37 +57,39 @@ export const resolvers: IResolvers<any, Context> = {
     name: (parent, args, ctx) => parent.name,
     type: (parent, args, ctx) => parent.type,
     buildings: (parent, args, ctx) => parent.buildings,
-    clientCount: (parent, args, ctx) => ({ location: parent.name })
+    clientCount: (parent, args, ctx) => ({ location_id: parent.id })
   },
   Building: {
     id: (parent, args, ctx) => parent.id,
     name: (parent, args, ctx) => parent.name,
     floors: (parent, args, ctx) => parent.floors,
     clientCount: async (parent, args, ctx) => ({
-      location: parent.location,
-      building: parent.name
+      location_id: parent.location_id,
+      building_id: parent.id
     })
   },
   Floor: {
     id: (parent, args, ctx) => parent.id,
     name: (parent, args, ctx) => parent.name,
     clientCount: async (parent, args, ctx) => ({
-      location: parent.location,
-      building: parent.building,
-      floor: parent.name
+      location_id: parent.location_id,
+      building_id: parent.building_id,
+      floor_id: parent.id
     })
   },
   Clients: {
     timespan: async (parent, args, ctx) => {
-      return await ctx.getClientCount({
-        location: parent.location,
-        building: parent.building,
-        floor: parent.floor,
-        timespan: {
-          from: args.from,
-          to: args.to
-        }
+      const coords = await ctx.getClientCount({
+        from: '48h',
+        to: '24h'
       })
+      const coordsFormatted = coords
+        .filter(coord => coord.locationId === parent.location_id)
+        .map(coord => ({
+          time: coord.time.toISOString(),
+          count: coord.clientCount
+        }))
+      return coordsFormatted
     }
   }
 }

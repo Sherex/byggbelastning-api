@@ -2,55 +2,47 @@ import { logger } from '@vtfk/logger'
 import format from 'pg-format'
 import { pool } from './db'
 
-interface ClientCountResponse {
-  time: Date
-  count: number
-}
-
-export interface ClientCountReturn {
-  time: String
-  count: number
-}
-
 export interface GetClientCountOptions {
-  location: string
-  building?: string
-  floor?: string
-  timespan?: {
-    from?: Date
-    to?: Date
-  }
+  from?: string
+  to?: string
 }
-// TODO: Use dataloader for caching
-export async function getClientCount (options: GetClientCountOptions): Promise<ClientCountReturn[]> {
-  const queryVariables = []
-  if (typeof options.timespan?.from !== 'undefined') queryVariables.push(options.timespan?.from)
-  if (typeof options.timespan?.to !== 'undefined') queryVariables.push(options.timespan?.to)
-  if (typeof options.building !== 'undefined') queryVariables.push(options.building)
-  if (typeof options.floor !== 'undefined') queryVariables.push(options.floor)
+export interface ClientCount {
+  time: Date
+  locationId: number
+  clientCount: number
+}
 
-  logger('debug', ['get-client-count', 'getClientCount', 'getting client count', 'options', JSON.stringify(options)])
-  const query = format(`
-  SELECT
-    time,
-    SUM(assocount) as count
-  FROM clients_location
-  WHERE
-    ${typeof options.timespan?.from !== 'undefined' ? 'time > %L AND' : ''}
-    ${typeof options.timespan?.to !== 'undefined' ? 'time < %L AND' : ''}
-    ${typeof options.building !== 'undefined' ? 'building = %L AND' : ''}
-    ${typeof options.floor !== 'undefined' ? 'floor = %L AND' : ''}
-    location = %L
-  GROUP BY time
-  ORDER BY time`,
-  ...queryVariables,
-  options.location
-  )
+export interface ClientCountResponse {
+  time: Date
+  locationId: number
+  clientCount: number
+}
 
-  const response = await pool.query<ClientCountResponse>(query)
-  logger('debug', ['get-client-count', 'getClientCount', 'getting client count', 'success'])
-  return response.rows.map(row => ({
-    ...row,
-    time: row.time.toISOString()
-  }))
+export async function getClientCount (options: GetClientCountOptions): Promise<ClientCount[]> {
+  // TODO: Implement timespan (to >= 24h)
+  options.from = options.from ?? '48h'
+  options.to = options.to ?? '24h'
+
+  logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates'])
+  const query = `
+    SELECT
+      TIME_BUCKET_GAPFILL('1h', cc.first_located) AS "time", 
+      lv.location_id AS "locationId",
+      COUNT(DISTINCT(cc.cid)) AS "clientCount"
+    FROM client_coordinate cc
+    RIGHT JOIN location_view lv
+      ON cc.floor_id = lv.floor_id
+    WHERE
+      cc.first_located > (now() - INTERVAL '48h')::DATE AND
+      cc.first_located < (now() - INTERVAL '24h')::DATE
+    GROUP BY
+      "time",
+      lv.location_id,
+      lv.location_name
+    ORDER BY
+      "time" DESC;`
+
+  const response = await pool.query<ClientCountResponse>(format(query, options.from, options.to))
+  logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates', 'success'])
+  return response.rows
 }
