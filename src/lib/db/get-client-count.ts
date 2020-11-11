@@ -33,8 +33,8 @@ export async function getClientCount (options: GetClientCountOptions): Promise<C
     RIGHT JOIN location_view lv
       ON cc.floor_id = lv.floor_id
     WHERE
-      cc.first_located > (now() - INTERVAL '48h')::DATE AND
-      cc.first_located < (now() - INTERVAL '24h')::DATE
+      cc.first_located > (now() - INTERVAL '24h')::DATE AND
+      cc.first_located < (now() - INTERVAL '0h')::DATE
     GROUP BY
       "time",
       lv.location_id,
