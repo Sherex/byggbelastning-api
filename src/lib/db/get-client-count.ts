@@ -42,7 +42,12 @@ export async function getClientCount (options: GetClientCountOptions): Promise<C
     ORDER BY
       "time" DESC;`
 
+  const queryTime = Date.now()
   const response = await pool.query<ClientCountResponse>(format(query, options.from, options.to))
-  logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates', 'success'])
+  logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates', 'success', 'query time', `${Date.now() - queryTime}ms`])
   return response.rows
+}
+
+export async function getClientCountArray (options: readonly GetClientCountOptions[]): Promise<ClientCount[][]> {
+  return await Promise.all(options.map(getClientCount))
 }

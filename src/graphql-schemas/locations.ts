@@ -79,7 +79,7 @@ export const resolvers: IResolvers<any, Context> = {
   },
   Clients: {
     timespan: async (parent, args, ctx) => {
-      const coords = await ctx.getClientCount({
+      const coords = await ctx.getClientCount.load({
         from: '48h',
         to: '24h'
       })

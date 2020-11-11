@@ -1,19 +1,25 @@
+import Dataloader from 'dataloader'
 import {
   getLocations,
   Location,
-  getClientCount,
+  getClientCountArray,
   ClientCount,
   GetClientCountOptions
 } from './db'
 
 export interface Context {
   getLocations: () => Promise<Location[]>
-  getClientCount: (options: GetClientCountOptions) => Promise<ClientCount[]>
+  getClientCount: Dataloader<GetClientCountOptions, ClientCount[]>
 }
 
 export function getContext (): Context {
   return {
     getLocations,
-    getClientCount
+    getClientCount: new Dataloader<GetClientCountOptions, ClientCount[], String>(
+      async options => await getClientCountArray(options),
+      {
+        cacheKeyFn: keys => JSON.stringify(keys)
+      }
+    )
   }
 }
