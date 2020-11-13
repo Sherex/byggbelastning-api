@@ -29,4 +29,6 @@ COPY --from=build /usr/src/app/dist/ ./dist/
 COPY --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY --from=build /usr/src/app/package*.json ./
 
+EXPOSE 4000
+
 CMD ["npm", "start"]

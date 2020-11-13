@@ -18,8 +18,11 @@ For example as a datasource for PowerBI.
 git clone https://github.com/vtfk/byggbelastning-api
 cd byggbelastning-api/
 
-# Run the compose-file to build the image and start a container
-docker-compose up -d # --build # Use the --build option to force-build on new version
+# Use the compose-file to build the image and start a container
+npm run docker:start #--build # Use the --build option to force-build
+
+# Stop the container
+npm run docker:stop
 
 # Read and follow the logs for the created container
 docker logs -f byggbelastning-api

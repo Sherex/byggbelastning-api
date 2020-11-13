@@ -13,7 +13,9 @@
     "dev": "ts-node-dev --no-notify",
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
-    "test": "npm run lint"
+    "test": "npm run lint",
+    "docker:start": "docker-compose up -d",
+    "docker:stop": "docker-compose down"
   },
   "keywords": [],
   "author": "Ingar Helgesen (https://github.com/Sherex)",

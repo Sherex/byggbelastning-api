@@ -3,6 +3,7 @@ services:
   byggbelastning-api:
     container_name: byggbelastning-api
     build: ./
+    image: byggbelastning-api:latest
     env_file: ./.env
     environment:
       - APP_PORT=4000
