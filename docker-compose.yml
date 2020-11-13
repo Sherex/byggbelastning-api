@@ -1,0 +1,10 @@
+version: "3.7"
+services:
+  byggbelastning-api:
+    container_name: byggbelastning-api
+    build: ./
+    env_file: ./.env
+    environment:
+      - APP_PORT=4000
+    ports:
+      - 4000:4000

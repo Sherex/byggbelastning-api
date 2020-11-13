@@ -1,5 +1,6 @@
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
+import { logger } from '@vtfk/logger'
 import { schema } from './graphql-schemas'
 import { getContext } from './lib/get-context'
 
@@ -11,6 +12,8 @@ const server = new ApolloServer({
 const app = express()
 server.applyMiddleware({ app })
 
-app.listen({ port: 4000 }, () =>
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
-)
+const port = process.env.APP_PORT ?? 4000
+
+app.listen({ port }, () => {
+  logger('info', ['index', 'server ready!', 'listening on port', String(port)])
+})
