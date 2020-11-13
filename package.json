@@ -1,13 +1,14 @@
 {
-  "name": "school-client-traffic-api",
+  "name": "byggbelastning-api",
   "version": "0.1.0",
   "private": true,
-  "description": "An API to get data from school-client-traffic-sync DB",
+  "description": "The API to get data from byggbelastning-data-poller DB, in the Byggbelastning project.",
   "main": "dist/index.js",
   "files": [
     "dist/"
   ],
   "scripts": {
+    "start": "node dist/index.js",
     "build": "tsc",
     "dev": "ts-node-dev --no-notify",
     "lint": "eslint src/",
@@ -15,7 +16,7 @@
     "test": "npm run lint"
   },
   "keywords": [],
-  "author": "Sherex <ingar@i-h.no> (https://github.com/Sherex)",
+  "author": "Ingar Helgesen (https://github.com/Sherex)",
   "license": "MIT",
   "dependencies": {
     "@vtfk/logger": "^2.3.1",
