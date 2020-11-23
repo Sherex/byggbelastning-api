@@ -1,11 +1,14 @@
 import { mergeSchemas } from 'apollo-server-express'
 import * as location from './locations'
+import * as locationTypes from './location-types'
 
 export const schema = mergeSchemas({
   schemas: [
-    location.query
+    location.query,
+    locationTypes.query
   ],
   resolvers: [
-    location.resolvers
+    location.resolvers,
+    locationTypes.resolvers
   ]
 })
