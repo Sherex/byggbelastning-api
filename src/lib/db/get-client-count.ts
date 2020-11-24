@@ -25,22 +25,22 @@ export async function getClientCount (options: GetClientCountOptions): Promise<C
 
   logger('debug', ['get-client-coords', 'getClientCoords', 'getting coordinates'])
   const query = `
-    SELECT
-      TIME_BUCKET_GAPFILL('1h', cc.first_located) AS "time", 
+    SELECT 
+      cc."time",
       lv.location_id AS "locationId",
-      COUNT(DISTINCT(cc.cid)) AS "clientCount"
-    FROM client_coordinate cc
-    RIGHT JOIN location_view lv
+      SUM(cc.auth_count) AS "clientCount"
+    FROM client_count cc
+    INNER JOIN location_view lv
       ON cc.floor_id = lv.floor_id
     WHERE
-      cc.first_located > (now() - INTERVAL '24h')::DATE AND
-      cc.first_located < (now() - INTERVAL '0h')::DATE
+      cc."time" > (now() - INTERVAL '24h')::DATE AND
+      cc."time" < (now() - INTERVAL '0h')::DATE
     GROUP BY
-      "time",
-      lv.location_id,
-      lv.location_name
+      cc."time",
+      lv.location_id
     ORDER BY
-      "time" DESC;`
+      lv.location_id ASC,
+      cc."time" ASC;`
 
   const queryTime = Date.now()
   const response = await pool.query<ClientCountResponse>(format(query, options.from, options.to))
