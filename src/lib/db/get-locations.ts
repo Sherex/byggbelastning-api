@@ -32,7 +32,7 @@ export async function getLocations (): Promise<Location[]> {
 
   const locations: Location[] = []
   response.rows.forEach(row => {
-    let location = locations.find(location => row.location === location.name)
+    let location = locations.find(location => row.location_id === location.id)
     if (location === undefined) {
       locations.push({
         id: row.location_id,
@@ -47,7 +47,7 @@ export async function getLocations (): Promise<Location[]> {
       location = locations[locations.length - 1]
     }
 
-    let building = location.buildings.find(building => row.building === building.name)
+    let building = location.buildings.find(building => row.building_id === building.id)
     if (building === undefined) {
       location.buildings.push({
         id: row.building_id,
@@ -58,7 +58,7 @@ export async function getLocations (): Promise<Location[]> {
       building = location.buildings[location.buildings.length - 1]
     }
 
-    let floor = building.floors.find(floor => row.floor === floor.name)
+    let floor = building.floors.find(floor => row.floor_id === floor.id)
     if (floor === undefined) {
       building.floors.push({
         id: row.floor_id,
