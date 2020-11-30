@@ -6,7 +6,7 @@ import { getContext } from './lib/get-context'
 
 const server = new ApolloServer({
   schema,
-  context: getContext()
+  context: getContext
 })
 
 const app = express()
